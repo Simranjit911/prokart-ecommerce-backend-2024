@@ -27,8 +27,7 @@ cloudinary.config({
 // middlewares
 app.use(fileUpload({ useTempFiles: true }));
 app.use(cors({
-    origin: ["http://localhost:5173"],
-    
+    origin: ["https://prokart-seven.vercel.app"],    
     credentials: true
 }));
 app.use(express.json());

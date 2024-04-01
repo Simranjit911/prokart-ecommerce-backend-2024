@@ -28,8 +28,8 @@ export async function stripePay(req, res) {
                 line_items: lineItems,
                 mode: "payment",
                   customer_email: req?.user?.email,          
-                success_url: "http://localhost:5173/success",
-                cancel_url: "http://localhost:5173/cancel",
+                success_url: "https://prokart-seven.vercel.app/success",
+                cancel_url: "https://prokart-seven.vercel.app/cancel",
             })
             .then((session) => {
                 res.status(200).json({ id: session.id });
