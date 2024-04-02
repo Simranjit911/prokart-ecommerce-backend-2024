@@ -51,14 +51,10 @@ export async function registerUser(req, res) {
                     });
 
                     const { options, token } = getToken(newUser._id);
+                    res.cookie("token", token, options)
+                    res.status(201).json({ msg: "User Registered Successfully!", newUser, token });
 
-                     deleteAllFilesInDirectory().then((rs)=>{
-                         res.cookie("token", token, options)
-                         res.status(201).json({ msg: "User Registered Successfully!", newUser, token });
-                     }).catch((er)=>{
-                        console.log(er)
-                     })
-                  
+
 
                 }).catch((e) => {
                     res.status(406).json({ msg: "User Registration Failed!", e });
@@ -201,7 +197,7 @@ export async function getProfile(req, res) {
 //Admin routers
 export async function getAllUsers(req, res) {
     try {
-        
+
         let allUsers = await userModel.find({})
         let totalsUsers = await userModel.countDocuments()
         res.status(200).json({ msg: "All Users", allUsers, totalsUsers })

@@ -14,7 +14,7 @@ export function getToken(id) {
         expires: new Date(expires),
         httpOnly: true,
         secure:true,
-        sameSite:true
+        sameSite:"none"
     };
 
     let data = {
