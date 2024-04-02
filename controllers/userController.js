@@ -52,12 +52,9 @@ export async function registerUser(req, res) {
 
                     const { options, token } = getToken(newUser._id);
 
-                     deleteAllFilesInDirectory().then((rs)=>{
                          res.cookie("token", token, options)
                          res.status(201).json({ msg: "User Registered Successfully!", newUser, token });
-                     }).catch((er)=>{
-                        console.log(er)
-                     })
+
                   
 
                 }).catch((e) => {
