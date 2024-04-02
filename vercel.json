@@ -9,11 +9,7 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/",
-      "headers":{
-        "Access-Control-Allow-Origin":"https://prokart-seven.vercel.app",
-        "Access-Control-Allow-Credentials": "true"
-      }
+      "dest": "/index.js"
     }
   ]  
 }
