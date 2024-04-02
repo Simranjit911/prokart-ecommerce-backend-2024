@@ -22,44 +22,44 @@ cloudinary.config({
 export async function registerUser(req, res) {
     try {
         const { name, email, password } = req.body;
-        const { avatar } = req.files;
+        // const { avatar } = req.files;
 
-        console.log(avatar)
+        console.log(name,email,password)
         const findUser = await userModel.findOne({ email });
 
         if (findUser) {
             return res.status(403).json({ msg: "User Already Registered!" });
         } else {
-            console.log("r")
-            cloudinary.v2.uploader.upload(avatar.tempFilePath, {
-                folder: "avatars",
-                width: 150,
-                crop: "scale"
-            })
-                .then(async (result) => {
-                    console.log(result)
-                    const hashPassword = await hashPass(password);
+            // cloudinary.v2.uploader.upload(avatar.tempFilePath, {
+            //     folder: "avatars",
+            //     width: 150,
+            //     crop: "scale"
+            // })
+            //     .then(async (result) => {
+            //         console.log(result)                   
 
-                    const newUser = await userModel.create({
+            //     }).catch((e) => {
+            //         res.status(406).json({ msg: "User Registration Failed!", e });
+            //         console.log(e)
+            //     })
+                const hashPassword = await hashPass(password);
+
+                const newUser = await userModel.create({
                         name,
                         email,
                         password: hashPassword,
-                        avatar: {
-                            public_id: result.public_id,
-                            url: result.secure_url
-                        }
+                        // avatar: {
+                        //     public_id: result.public_id,
+                        //     url: result.secure_url
+                        // }
                     });
 
                     const { options, token } = getToken(newUser._id);
                     res.cookie("token", token, options)
-                    res.status(201).json({ msg: "User Registered Successfully!", newUser, token });
-
-                }).catch((e) => {
-                    res.status(406).json({ msg: "User Registration Failed!", e });
-                    console.log(e)
-                })
+                    res.status(201).json({ msg: "User Registered Successfully!", newUser, token });            
         }
     } catch (error) {
+        console.log(error)
         return res.status(500).json({ msg: "User Registration Failed!", error });
     }
 }
