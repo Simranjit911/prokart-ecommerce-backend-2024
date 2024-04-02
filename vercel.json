@@ -2,16 +2,17 @@
   "version": 2,
   "builds": [
     {
-      "src": "/index.js",
+      "src": "index.js", // Changed to a relative path
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/index.js",
+      "dest": "index.js"
+    }
   ],
-    "headers": [
+  "headers": [
     {
       "source": "/(.*)",
       "headers": [
