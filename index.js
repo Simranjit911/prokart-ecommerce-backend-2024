@@ -25,11 +25,35 @@ cloudinary.config({
     secure: true,
 })
 // middlewares
-app.use(cors({
-    origin: ["https://prokart-seven.vercel.app","http://localhost:5173"],
-    methods: ["GET", "POST", "PUT", "DELETE"], 
-    credentials: true
-}));
+// app.use(cors({
+//     origin: ["https://prokart-seven.vercel.app","http://localhost:5173"],
+//     methods: ["GET", "POST", "PUT", "DELETE"], 
+//     credentials: true
+// }));
+// Define allowed origins
+const allowedOrigins = ["https://prokart-seven.vercel.app", "http://localhost:5173"];
+
+// Enable CORS for Express routes
+const allowCors = fn => async (req, res) => {
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Methods', 'GET,PATCH,DELETE,POST,PUT');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+  );
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+  return await fn(req, res);
+};
+
+// Apply CORS middleware to all routes
+app.use(allowCors);
 app.use(fileUpload({ useTempFiles: true }));
 
 
