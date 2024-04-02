@@ -54,17 +54,10 @@ export async function registerUser(req, res) {
                     res.cookie("token", token, options)
                     res.status(201).json({ msg: "User Registered Successfully!", newUser, token });
 
-
-
                 }).catch((e) => {
                     res.status(406).json({ msg: "User Registration Failed!", e });
-
                     console.log(e)
                 })
-
-
-
-
         }
     } catch (error) {
         return res.status(500).json({ msg: "User Registration Failed!", error });
