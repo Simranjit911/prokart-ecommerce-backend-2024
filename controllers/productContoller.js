@@ -40,12 +40,11 @@ export async function createProduct(req, res) {
                 console.log(result);
                 req.body.images = [{ url: result.secure_url, public_id: result.public_id }];
                 let product = await productModel.create(req.body);
-
-                deleteAllFilesInDirectory().then((rs) => {
-                    return res.status(201).json({ msg: "Product created!", product });
-                }).catch((er) => {
-                    console.log(er);
-                });
+                return res.status(201).json({ msg: "Product created!", product });
+                // deleteAllFilesInDirectory().then((rs) => {
+                // }).catch((er) => {
+                //     console.log(er);
+                // });
             }).catch((e) => {
                 res.status(406).json({ msg: "Image upload failed!", e });
                 console.log(e);
@@ -125,7 +124,7 @@ export async function getAllProduct(req, res) {
             filter.desc = { $regex: desc, $options: 'i' };
         }
         if (rating) {
-            filter.rating = { $gte: parseInt(rating) };
+            filter.ratings = { $gte: parseInt(rating) };
         }
         if (isRecom) {
             filter.isRecom = isRecom.toLowerCase() === 'true'; // Converting string to boolean
@@ -136,12 +135,30 @@ export async function getAllProduct(req, res) {
         if (isLatest) {
             filter.isLatest = isLatest.toLowerCase() === 'true';
         }
+        let sort = {};
         if (price) {
-            filter.price = { $lte: parseInt(price) };
+            if (price === "asc") {
+                sort.price = 1;
+            }
+            if (price === "desc") {
+                sort.price = -1;
+            }
+
+            if (price === "latest") {
+                filter.isLatest = isLatest.toLowerCase() === 'true';
+                console.log(filter.isLatest)
+                filter.isLatest=true
+
+            }
+            if (price === "recom") {
+                filter.isRecom = true;
+                console.log(filter.isRecom)
+            }
         }
+        console.log(sort)
 
         let skip = (page - 1) * resultsPerPage;
-        let products = await productModel.find(filter).limit(resultsPerPage).skip(skip)
+        let products = await productModel.find(filter).limit(resultsPerPage).skip(skip).sort(sort);
         let totalProducts = await productModel.countDocuments();
 
         // Counting in-stock and out-of-stock products
@@ -150,10 +167,11 @@ export async function getAllProduct(req, res) {
         let categories = await productModel.distinct('category');
 
         // let outOfStockCount = await productModel.countDocuments({ stockStatus: 'Out of Stock' });
-        console.log(filter, products)
+        console.log(filter)
 
         res.status(200).json({ msg: "Products found!", products, totalProducts, outOfStockCount, categories, productsLength: products.length });
     } catch (error) {
+        console.log(error)
         res.status(500).json({ msg: "Error while fetching products!", error });
     }
 }

@@ -27,7 +27,7 @@ export async function stripePay(req, res) {
                 payment_method_types: ["card"],
                 line_items: lineItems,
                 mode: "payment",
-                  customer_email: req?.user?.email,          
+                customer_email: req?.user?.email,
                 success_url: "https://prokart-seven.vercel.app/success",
                 cancel_url: "https://prokart-seven.vercel.app/cancel",
             })
@@ -60,10 +60,10 @@ export async function createOrder(req, res) {
             req.body.isPaid = "no"
         } else {
             req.body.isPaid = "yes"
+            req.body.paidAt = Date.now()
         }
 
-
-        orderedItems.map(async (item) => {
+        orderedItems?.map(async (item) => {
             let product = await productModel.findById(item.productId)
             product.stock -= item.qty
             await product.save({ validateBeforeSave: false })
@@ -71,7 +71,7 @@ export async function createOrder(req, res) {
 
         let order = await orderModel.create({ ...req.body })
         console.log("order", order)
-        order.orderedTime=new Date().toLocaleString()
+        order.orderedTime = new Date().toLocaleString()
         await order.save()
         res.status(200).json({ msg: "Order created!", order })
     } catch (error) {

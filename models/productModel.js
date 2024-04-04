@@ -20,7 +20,7 @@ let productSchema = new mongoose.Schema({
         }
 
     },
-    ratings: {
+    ratings : {
         type: Number,
         required: true,
         default: 0
@@ -85,8 +85,8 @@ let productSchema = new mongoose.Schema({
                 type:String,
             },
             reviewTime: {
-                type: String,
-                default: new Date().toLocaleString()
+                type: Date,
+                default: Date.now()
             }
         }
     ],
