@@ -45,7 +45,7 @@ app.get('/', (req, res) => {
 //routes
 app.use('/product', productRouter);
 app.use('/user', userRouter);
-app.use('/order', isAuth, orderRouter);
+app.use('/order', orderRouter);
 
 // db connect
 connectDb(mongoUrl);

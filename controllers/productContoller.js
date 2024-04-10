@@ -104,19 +104,19 @@ export async function getOneProduct(req, res) {
 // get all product with filters
 export async function getAllProduct(req, res) {
     try {
-        const { name, desc, rating, isRecom, isNew, isLatest, price, resultsPerPage = 6, page = 1, category } = req.query;
+        let { name, desc, rating, isRecom, isNew, isLatest, price, resultsPerPage = 9, page = 1, category } = req.query;
+      
         let filter = {};
         if (name) {
-            // filter.name = { $regex: name, $options: 'i' };
-            // filter.category = { $regex: name, $options: 'i' };
-            // filter.desc= { $regex: name, $options: 'i' };
-            const regexPattern = { $regex: name, $options: 'i' };
-            filter.$or = [
-                { name: regexPattern },
-                { category: regexPattern },
-                { desc: regexPattern }
-            ];
+            let orConditions = [];
+            orConditions.push({ name: { $regex: new RegExp(name, 'i') } });
+            orConditions.push({ category: { $regex: new RegExp(name, 'i') } });
+            orConditions.push({ desc: { $regex: new RegExp(name, 'i') } });
+            if (orConditions.length > 0) {
+                filter.$or = orConditions;
+            }
         }
+
         if (category) {
             filter.category = { $regex: category, $options: 'i' };
         }
@@ -139,26 +139,36 @@ export async function getAllProduct(req, res) {
         if (price) {
             if (price === "asc") {
                 sort.price = 1;
+    // resultsPerPage = 6
+                
             }
             if (price === "desc") {
                 sort.price = -1;
+                // resultsPerPage = 6
+          
+
             }
 
             if (price === "latest") {
                 filter.isLatest = isLatest.toLowerCase() === 'true';
                 console.log(filter.isLatest)
-                filter.isLatest=true
+                filter.isLatest = true
+            // resultsPerPage = 6
+                      
+
 
             }
             if (price === "recom") {
                 filter.isRecom = true;
-                console.log(filter.isRecom)
+                // resultsPerPage = 6
+              
             }
         }
         console.log(sort)
 
         let skip = (page - 1) * resultsPerPage;
         let products = await productModel.find(filter).limit(resultsPerPage).skip(skip).sort(sort);
+        // let products = await productModel.find(filter).sort(sort);
         let totalProducts = await productModel.countDocuments();
 
         // Counting in-stock and out-of-stock products
@@ -168,7 +178,7 @@ export async function getAllProduct(req, res) {
 
         // let outOfStockCount = await productModel.countDocuments({ stockStatus: 'Out of Stock' });
         console.log(filter)
-
+        // console.log(products)
         res.status(200).json({ msg: "Products found!", products, totalProducts, outOfStockCount, categories, productsLength: products.length });
     } catch (error) {
         console.log(error)

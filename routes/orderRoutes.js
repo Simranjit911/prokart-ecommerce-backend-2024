@@ -4,15 +4,15 @@ import { isAuth, verifyAdmin } from '../middleware/auth.js'
 
 let orderRouter = express.Router()
 
-orderRouter.post("/new", createOrder)
-orderRouter.get("/me", getLoggedUserOrder)
-orderRouter.get("/one/:id", getSingleOrder)
+orderRouter.post("/new",isAuth, createOrder)
+orderRouter.get("/me",isAuth, getLoggedUserOrder)
+orderRouter.get("/one/:id",isAuth, getSingleOrder)
 
 
 //Admin
-orderRouter.get("/all", verifyAdmin,getAllOrder)
-orderRouter.put("/update", verifyAdmin,updateOrder)
-orderRouter.delete("/:id", verifyAdmin,deleteOrder)
+orderRouter.get("/all", isAuth,verifyAdmin,getAllOrder)
+orderRouter.put("/update",isAuth, verifyAdmin,updateOrder)
+orderRouter.delete("/:id",isAuth, verifyAdmin,deleteOrder)
 
 orderRouter.post("/payment", isAuth,stripePay)
 
